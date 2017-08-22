@@ -18,6 +18,7 @@ import com.layer.sdk.messaging.MessagePart;
 import com.layer.ui.R;
 import com.layer.ui.databinding.UiMessageItemCellTextBinding;
 import com.layer.ui.message.messagetypes.CellFactory;
+import com.layer.ui.message.messagetypes.MessageStyle;
 import com.layer.ui.util.Log;
 import com.layer.ui.util.Util;
 
@@ -45,12 +46,9 @@ public class TextCellFactory extends
         UiMessageItemCellTextBinding uiMessageItemCellTextBinding = UiMessageItemCellTextBinding
                 .inflate(layoutInflater, cellView, true);
 
-        mMessageStyle.setIsMe(isMe);
-        uiMessageItemCellTextBinding.setMessageStyle(mMessageStyle);
-        View v = uiMessageItemCellTextBinding.getRoot();
-        v.setBackgroundResource(isMe ? R.drawable.ui_message_item_cell_me : R.drawable.ui_message_item_cell_them);
-        ((GradientDrawable) v.getBackground()).setColor(isMe ? mMessageStyle.getMyBubbleColor() : mMessageStyle.getOtherBubbleColor());
-        return new CellHolder(uiMessageItemCellTextBinding);
+        TextCellFactoryViewModel textCellFactoryViewModel = new TextCellFactoryViewModel(mMessageStyle, isMe);
+        uiMessageItemCellTextBinding.setViewModel(textCellFactoryViewModel);
+        return new CellHolder(uiMessageItemCellTextBinding, textCellFactoryViewModel);
     }
 
     @Override
@@ -82,17 +80,15 @@ public class TextCellFactory extends
             if (message.getMessageParts().get(0).isContentReady()) {
                 textMessage = new String(message.getMessageParts().get(0).getData());
             } else {
-                downloadMessage(message, cellHolder);
-                cellHolder.mProgressBar.setVisibility(View.VISIBLE);
-                cellHolder.mProgressBar.show();
+                downloadMessage(message, cellHolder, parsed);
+                cellHolder.bind(null, null, true, null);
             }
         }
-        cellHolder.mTextView.setText(textMessage);
-        cellHolder.mTextView.setTag(parsed);
-        cellHolder.mTextView.setOnLongClickListener(this);
+
+        cellHolder.bind(textMessage, parsed, false, this);
     }
 
-    private void downloadMessage(final Message message, final CellHolder cellHolder) {
+    private void downloadMessage(final Message message, final CellHolder cellHolder, final TextInfo parsed) {
         final MessagePart part = message.getMessageParts().get(0);
         final TextView textView = cellHolder.mTextView;
         mTextViewUriHashMap.put(textView, message.getId());
@@ -109,16 +105,16 @@ public class TextCellFactory extends
                 Uri messageId = messagePart.getMessage().getId();
                 Uri uriValueInMap = mTextViewUriHashMap.get(textView);
                 if (uriValueInMap != null && uriValueInMap.equals(messageId) ) {
-                    textView.setText(new String(part.getData()));
                     mTextViewUriHashMap.remove(textView);
-                    cellHolder.mProgressBar.hide();
+                    cellHolder.bind(new String(part.getData()), parsed, false, TextCellFactory.this);
                 }
             }
 
             @Override
             public void onProgressError(MessagePart messagePart, Operation operation, Throwable throwable) {
                 mTextViewUriHashMap.remove(textView);
-                cellHolder.mProgressBar.hide();
+                cellHolder.bind(null, null, false, TextCellFactory.this);
+
                 if (Log.isLoggable(Log.ERROR)) {
                     Log.e("Message part download error: " + messagePart.getId(), throwable);
                 }
@@ -156,12 +152,49 @@ public class TextCellFactory extends
     }
 
     public static class CellHolder extends CellFactory.CellHolder {
-        TextView mTextView;
-        ContentLoadingProgressBar mProgressBar;
+        UiMessageItemCellTextBinding mUiMessageItemCellTextBinding;
+        TextCellFactoryViewModel mTextCellFactoryViewModel;
+        boolean isMe;
+        public TextView mTextView;
+        public ContentLoadingProgressBar mProgressBar;
+        public MessageStyle mMessageStyle;
 
-        public CellHolder(UiMessageItemCellTextBinding uiMessageItemCellTextBinding) {
+        public CellHolder(UiMessageItemCellTextBinding uiMessageItemCellTextBinding, TextCellFactoryViewModel textCellFactoryViewModel) {
+            mTextCellFactoryViewModel = textCellFactoryViewModel;
+            mUiMessageItemCellTextBinding = uiMessageItemCellTextBinding;
             mTextView = uiMessageItemCellTextBinding.cellText;
             mProgressBar = uiMessageItemCellTextBinding.textCellProgress;
+            isMe = mTextCellFactoryViewModel.isMyMessage();
+            mMessageStyle = mTextCellFactoryViewModel.getMessageStyle();
+        }
+
+        public void bind(String textMessage, TextInfo parsed, boolean shouldProgressBarBeVisible, View.OnLongClickListener listener) {
+            if (textMessage == null) {
+                if (shouldProgressBarBeVisible) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.show();
+                } else {
+                    mProgressBar.hide();
+                }
+            } else {
+
+                mTextCellFactoryViewModel.setText(textMessage);
+                View v = mUiMessageItemCellTextBinding.getRoot();
+                TextView textView = mUiMessageItemCellTextBinding.cellText;
+                textView.setTypeface(isMe ? mMessageStyle.getMyTextTypeface() :
+                        mMessageStyle.getOtherTextTypeface(), isMe ? mMessageStyle.getMyTextStyle()
+                        : mMessageStyle.getOtherTextStyle());
+                textView.setTag(parsed);
+                textView.setOnLongClickListener(listener);
+                v.setBackgroundResource(isMe ? R.drawable.ui_message_item_cell_me : R.drawable.ui_message_item_cell_them);
+                ((GradientDrawable) v.getBackground()).setColor(isMe ? mMessageStyle.getMyBubbleColor() : mMessageStyle.getOtherBubbleColor());
+
+                mTextCellFactoryViewModel.setTextColor(isMe ? mMessageStyle.getMyTextColor() : mMessageStyle.getOtherTextColor());
+                mTextCellFactoryViewModel.setLinkTextColor(isMe ? mMessageStyle.getMyTextColor() : mMessageStyle.getOtherTextColor());
+                mUiMessageItemCellTextBinding.notifyChange();
+                mUiMessageItemCellTextBinding.setViewModel(mTextCellFactoryViewModel);
+            }
+
         }
     }
 
