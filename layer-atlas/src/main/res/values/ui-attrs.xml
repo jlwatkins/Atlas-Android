@@ -6,7 +6,7 @@
     <!-- ###################### -->
     <attr name="FourPartItemsListView" format="reference" />
     <attr name="ComposeBar" format="reference" />
-    <attr name="MessagesRecyclerView" format="reference" />
+    <attr name="MessageItemListView" format="reference" />
     <attr name="AddressBar" format="reference" />
     <attr name="TypingIndicator" format="reference" />
     <attr name="AvatarView" format="reference" />
@@ -96,7 +96,7 @@
         <attr name="android:maxLines"/>
     </declare-styleable>
 
-    <declare-styleable name="MessagesRecyclerView">
+    <declare-styleable name="MessageItemListView">
         <attr name="myBubbleColor" />
         <attr name="myTextColor" />
         <attr name="myTextSize" />

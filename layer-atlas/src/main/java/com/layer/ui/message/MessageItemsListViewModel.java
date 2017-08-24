@@ -6,7 +6,6 @@ import android.databinding.Bindable;
 
 import com.layer.sdk.LayerClient;
 import com.layer.sdk.messaging.Message;
-import com.layer.ui.adapters.ItemRecyclerViewAdapter;
 import com.layer.ui.message.messagetypes.CellFactory;
 import com.layer.ui.util.DateFormatter;
 import com.layer.ui.util.imagecache.ImageCacheWrapper;
@@ -15,9 +14,9 @@ import com.layer.ui.util.views.SwipeableItem;
 import java.util.List;
 
 public class MessageItemsListViewModel extends BaseObservable {
-    private ItemRecyclerViewAdapter mMessageItemsAdapter;
+    private MessagesAdapter mMessageItemsAdapter;
     private List<CellFactory> mCellFactories;
-    private SwipeableItem.OnItemSwipeListener<Message> mOnMessageSwipeListener;
+    private SwipeableItem.OnItemSwipeListener<Message> mItemSwipeListener;
 
     public MessageItemsListViewModel(Context context, LayerClient layerClient,
             ImageCacheWrapper imageCacheWrapper, DateFormatter dateFormatter) {
@@ -25,7 +24,7 @@ public class MessageItemsListViewModel extends BaseObservable {
     }
 
     @Bindable
-    public ItemRecyclerViewAdapter getMessageItemsAdapter() {
+    public MessagesAdapter getMessageItemsAdapter() {
         return mMessageItemsAdapter;
     }
 
@@ -38,11 +37,11 @@ public class MessageItemsListViewModel extends BaseObservable {
         mCellFactories = cellFactories;
     }
 
-    public void setOnMessageItemSwipeListener(SwipeableItem.OnItemSwipeListener<Message> onMessageSwipeListener) {
-        mOnMessageSwipeListener = onMessageSwipeListener;
+    public void setOnItemSwipeListener(SwipeableItem.OnItemSwipeListener<Message> onItemSwipeListener) {
+        mItemSwipeListener = onItemSwipeListener;
     }
 
-    public SwipeableItem.OnItemSwipeListener<Message> getOnMessageSwipeListener() {
-        return mOnMessageSwipeListener;
+    public SwipeableItem.OnItemSwipeListener<Message> getItemSwipeListener() {
+        return mItemSwipeListener;
     }
 }

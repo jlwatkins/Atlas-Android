@@ -41,7 +41,7 @@
         <item name="avatarBorderColor">@color/layer_ui_avatar_border</item>
     </style>
 
-    <style name="MessagesRecyclerView">
+    <style name="MessageItemListView">
         <item name="myBubbleColor">@color/layer_ui_color_primary_blue</item>
         <item name="myTextColor">@color/layer_ui_text_white</item>
         <item name="myTextSize">@dimen/layer_ui_text_size_message_item</item>
