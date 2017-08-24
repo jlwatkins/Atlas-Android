@@ -21,9 +21,6 @@ public abstract class FourPartItemsListView<ITEM extends Queryable, ADAPTER exte
 
     protected FourPartItemStyle mFourPartItemStyle;
     protected ItemsRecyclerView<ITEM> mItemsRecyclerView;
-    protected LinearLayoutManager mLinearLayoutManager;
-    protected boolean shouldStackFromEnd = false;
-    protected ADAPTER mAdapter;
 
     public FourPartItemsListView(Context context) {
         super(context);
@@ -40,9 +37,9 @@ public abstract class FourPartItemsListView<ITEM extends Queryable, ADAPTER exte
         inflate(getContext(), R.layout.ui_four_part_items_list, this);
         mItemsRecyclerView = (ItemsRecyclerView<ITEM>) findViewById(R.id.ui_items_recycler);
 
-        mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mLinearLayoutManager.setStackFromEnd(shouldStackFromEnd);
-        mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        manager.setStackFromEnd(false);
+        mItemsRecyclerView.setLayoutManager(manager);
 
         DefaultItemAnimator noChangeAnimator = new DefaultItemAnimator() {
             @Override
@@ -55,7 +52,6 @@ public abstract class FourPartItemsListView<ITEM extends Queryable, ADAPTER exte
     }
 
     public void setAdapter(ADAPTER adapter) {
-        mAdapter = adapter;
         adapter.setStyle(mFourPartItemStyle);
         mItemsRecyclerView.setAdapter(adapter);
         adapter.refresh();
@@ -68,4 +64,5 @@ public abstract class FourPartItemsListView<ITEM extends Queryable, ADAPTER exte
     public void onDestroy() {
         mItemsRecyclerView.onDestroy();
     }
+
 }

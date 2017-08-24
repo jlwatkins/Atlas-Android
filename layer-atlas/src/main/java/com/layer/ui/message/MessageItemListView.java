@@ -26,11 +26,10 @@ import java.util.List;
 
 public class MessageItemListView  extends ConstraintLayout {
 
-    private boolean mShouldShowAvatarsInOneOnOneConversations;
-    private MessageStyle mMessageStyle;
+    protected boolean mShouldShowAvatarsInOneOnOneConversations;
+    protected MessageStyle mMessageStyle;
     protected MessagesRecyclerView mMessagesRecyclerView;
     protected LinearLayoutManager mLinearLayoutManager;
-    protected boolean shouldStackFromEnd = false;
     protected MessagesAdapter mAdapter;
 
     public MessageItemListView(Context context) {
@@ -49,7 +48,7 @@ public class MessageItemListView  extends ConstraintLayout {
         mMessagesRecyclerView = (MessagesRecyclerView) findViewById(R.id.ui_message_recycler);
 
         mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mLinearLayoutManager.setStackFromEnd(shouldStackFromEnd);
+        mLinearLayoutManager.setStackFromEnd(true);
         mMessagesRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         DefaultItemAnimator noChangeAnimator = new DefaultItemAnimator() {
