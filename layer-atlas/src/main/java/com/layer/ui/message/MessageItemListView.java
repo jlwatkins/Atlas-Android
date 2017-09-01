@@ -4,13 +4,17 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.layer.sdk.LayerClient;
+import com.layer.sdk.changes.LayerChange;
+import com.layer.sdk.changes.LayerChangeEvent;
+import com.layer.sdk.listeners.LayerChangeEventListener;
 import com.layer.sdk.messaging.Conversation;
 import com.layer.sdk.messaging.Identity;
 import com.layer.sdk.messaging.Message;
@@ -21,36 +25,36 @@ import com.layer.ui.R;
 import com.layer.ui.TypingIndicatorLayout;
 import com.layer.ui.message.messagetypes.CellFactory;
 import com.layer.ui.message.messagetypes.MessageStyle;
+import com.layer.ui.recyclerview.ItemsRecyclerView;
 import com.layer.ui.util.views.SwipeableItem;
 
 import java.util.List;
 import java.util.Set;
 
-public class MessageItemListView  extends ConstraintLayout {
+public class MessageItemListView extends SwipeRefreshLayout implements LayerChangeEventListener.BackgroundThread.Weak {
 
     protected boolean mShouldShowAvatarsInOneOnOneConversations;
     protected MessageStyle mMessageStyle;
-    protected MessagesRecyclerView mMessagesRecyclerView;
+    protected ItemsRecyclerView<Message> mMessagesRecyclerView;
     protected LinearLayoutManager mLinearLayoutManager;
     protected MessagesAdapter mAdapter;
 
+    protected LayerClient mLayerClient;
+    protected Conversation mConversation;
+
     public MessageItemListView(Context context) {
-        this(context, null, 0);
+        this(context, null);
     }
 
     public MessageItemListView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public MessageItemListView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        parseStyle(context, attrs, defStyleAttr);
+        super(context, attrs);
+        parseStyle(context, attrs, 0);
 
         inflate(getContext(), R.layout.ui_message_items_list, this);
-        mMessagesRecyclerView = (MessagesRecyclerView) findViewById(R.id.ui_message_recycler);
+        mMessagesRecyclerView = (ItemsRecyclerView<Message>) findViewById(R.id.ui_message_recycler);
 
         mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mLinearLayoutManager.setStackFromEnd(true);
+        mLinearLayoutManager.setStackFromEnd(false);
         mMessagesRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         DefaultItemAnimator noChangeAnimator = new DefaultItemAnimator() {
@@ -69,6 +73,7 @@ public class MessageItemListView  extends ConstraintLayout {
 
     public void onDestroy() {
         mMessagesRecyclerView.onDestroy();
+        mLayerClient.unregisterEventListener(this);
     }
 
     public void setAdapter(final MessagesAdapter adapter) {
@@ -95,6 +100,57 @@ public class MessageItemListView  extends ConstraintLayout {
                     }
                 });
     }
+
+    //============================================================================================
+    // LayerChangeEventListener.BackgroundThread.Weak Methods
+    //============================================================================================
+
+    @Override
+    public void onChangeEvent(LayerChangeEvent layerChangeEvent) {
+        for (LayerChange change : layerChangeEvent.getChanges()) {
+            if (change.getObject() != mConversation) continue;
+            if (change.getChangeType() != LayerChange.Type.UPDATE) continue;
+            if (!change.getAttributeName().equals("historicSyncStatus")) continue;
+            refresh();
+        }
+    }
+
+    //============================================================================================
+    // SwipeRefreshLayout Methods
+    //============================================================================================
+
+    /**
+     * Automatically refresh on resume.
+     */
+    @Override
+    protected void onVisibilityChanged(View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility != View.VISIBLE) return;
+        refresh();
+    }
+
+    /**
+     * Refreshes the state of the underlying recycler view
+     */
+    private void refresh() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                if (mConversation == null) {
+                    setEnabled(false);
+                    setRefreshing(false);
+                    return;
+                }
+                Conversation.HistoricSyncStatus status = mConversation.getHistoricSyncStatus();
+                setEnabled(status == Conversation.HistoricSyncStatus.MORE_AVAILABLE);
+                setRefreshing(status == Conversation.HistoricSyncStatus.SYNC_PENDING);
+            }
+        });
+    }
+
+    //============================================================================================
+    // Public Methods
+    //============================================================================================
 
     /**
      * Convenience pass-through to this list's MessagesAdapter.
@@ -162,13 +218,17 @@ public class MessageItemListView  extends ConstraintLayout {
      * Updates the underlying MessagesAdapter with a Query for Messages in the given
      * Conversation.
      *
+     * @param layerClient  LayerClient currently in use
      * @param conversation Conversation to display Messages for.
-     * @return This AtlasMessagesRecyclerView.
      */
-    public void setConversation(Conversation conversation) {
+    public void setConversation(LayerClient layerClient, Conversation conversation) {
         if (conversation != null) {
             mAdapter.setReadReceiptsEnabled(conversation.isReadReceiptsEnabled());
         }
+
+        mConversation = conversation;
+        mLayerClient.registerEventListener(this);
+
         mAdapter.setQuery(Query.builder(Message.class)
                 .predicate(new Predicate(Message.Property.CONVERSATION, Predicate.Operator.EQUAL_TO, conversation))
                 .sortDescriptor(new SortDescriptor(Message.Property.POSITION, SortDescriptor.Order.ASCENDING))

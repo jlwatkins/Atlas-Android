@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.layer.ui.message.MessageItemsListViewModel"/>
+    </data>
+
+    <merge android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.layer.ui.HistoricMessagesFetchLayout
+            android:id="@+id/historic_sync_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.layer.ui.message.MessageItemListView
+                android:id="@+id/messages_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:adapter="@{viewModel.messageItemsAdapter}"
+                app:cellFactories="@{viewModel.CellFactories}"
+                app:itemSwipeListener="@{viewModel.itemSwipeListener}"/>
+
+        </com.layer.ui.HistoricMessagesFetchLayout>
+
+        <com.layer.ui.composebar.ComposeBar
+            android:id="@+id/compose_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/messages_compose_bar_hint"
+            android:minHeight="48dp"
+            android:visibility="gone"/>
+
+    </merge>
+</layout>

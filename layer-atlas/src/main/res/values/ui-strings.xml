@@ -65,4 +65,6 @@
     </plurals>
 
 
+    <string name="messages_compose_bar_hint">Messages</string>
+
 </resources>
