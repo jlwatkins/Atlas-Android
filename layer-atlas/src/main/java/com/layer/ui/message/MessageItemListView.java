@@ -42,6 +42,8 @@ public class MessageItemListView extends SwipeRefreshLayout implements LayerChan
     protected LayerClient mLayerClient;
     protected Conversation mConversation;
 
+    protected int mNumberOfItemsPerSync = 25;
+
     public MessageItemListView(Context context) {
         this(context, null);
     }
@@ -54,7 +56,7 @@ public class MessageItemListView extends SwipeRefreshLayout implements LayerChan
         mMessagesRecyclerView = (ItemsRecyclerView<Message>) findViewById(R.id.ui_message_recycler);
 
         mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mLinearLayoutManager.setStackFromEnd(false);
+        mLinearLayoutManager.setStackFromEnd(true);
         mMessagesRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         DefaultItemAnimator noChangeAnimator = new DefaultItemAnimator() {
@@ -65,6 +67,15 @@ public class MessageItemListView extends SwipeRefreshLayout implements LayerChan
         };
         noChangeAnimator.setSupportsChangeAnimations(false);
         mMessagesRecyclerView.setItemAnimator(noChangeAnimator);
+
+        setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (mConversation.getHistoricSyncStatus() == Conversation.HistoricSyncStatus.MORE_AVAILABLE) {
+                    mConversation.syncMoreHistoricMessages(mNumberOfItemsPerSync);
+                }
+            }
+        });
     }
 
     public void setItemSwipeListener(SwipeableItem.OnItemSwipeListener<Message> itemSwipeListener) {
@@ -152,6 +163,15 @@ public class MessageItemListView extends SwipeRefreshLayout implements LayerChan
     // Public Methods
     //============================================================================================
 
+
+    public int getNumberOfItemsPerSync() {
+        return mNumberOfItemsPerSync;
+    }
+
+    public void setNumberOfItemsPerSync(int numberOfItemsPerSync) {
+        mNumberOfItemsPerSync = numberOfItemsPerSync;
+    }
+
     /**
      * Convenience pass-through to this list's MessagesAdapter.
      *
@@ -227,6 +247,7 @@ public class MessageItemListView extends SwipeRefreshLayout implements LayerChan
         }
 
         mConversation = conversation;
+        mLayerClient = layerClient;
         mLayerClient.registerEventListener(this);
 
         mAdapter.setQuery(Query.builder(Message.class)
