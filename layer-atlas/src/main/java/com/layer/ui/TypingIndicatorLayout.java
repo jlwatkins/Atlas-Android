@@ -57,35 +57,24 @@ public class TypingIndicatorLayout extends FrameLayout implements LayerTypingInd
     }
 
     /**
-     * Initializes this AtlasTypingIndicator.
-     *
-     * @return This AtlasTypingIndicator for chaining.
-     */
-    public TypingIndicatorLayout init(LayerClient layerClient) {
-        if (layerClient == null) throw new IllegalArgumentException("LayerClient cannot be null");
-        layerClient.registerTypingIndicator(this);
-        return this;
-    }
-
-    /**
      * Sets the Conversation to listen for typing on.  If `null`, no typing will be listened to.
      *
+     * @param layerClient  LayerClient currently in use
      * @param conversation Conversation to listen for typing on
-     * @return This AtlasTypingIndicator for chaining.
      */
-    public TypingIndicatorLayout setConversation(Conversation conversation) {
+    public void setConversation(LayerClient layerClient, Conversation conversation) {
+        if (layerClient == null) throw new IllegalArgumentException("LayerClient cannot be null");
+        layerClient.registerTypingIndicator(this);
         mConversation = conversation;
-        return this;
     }
 
     /**
      * Sets the TypingIndicatorFactory used to generate the TypingIndicator View.
      *
      * @param factory TypingIndicatorFactory used to generate the TypingIndicator View.
-     * @return This AtlasTypingIndicator.
      * @see TypingIndicatorLayout.TypingIndicatorFactory
      */
-    public TypingIndicatorLayout setTypingIndicatorFactory(TypingIndicatorFactory factory) {
+    public void setTypingIndicatorFactory(TypingIndicatorFactory factory) {
         mTypingIndicatorFactory = factory;
         removeAllViews();
         if (factory != null) {
@@ -94,40 +83,31 @@ public class TypingIndicatorLayout extends FrameLayout implements LayerTypingInd
         } else {
             mIndicatorView = null;
         }
-        return this;
     }
 
     /**
      * Sets the TypingActivityListener for receiving TypingIndicator activity state changes.
      *
      * @param listener TypingActivityListener for receiving TypingIndicator activity state changes.
-     * @return This AtlasTypingIndicator.
      */
-    public TypingIndicatorLayout setTypingActivityListener(TypingActivityListener listener) {
+    public void setTypingActivityListener(TypingActivityListener listener) {
         mActivityListener = listener;
-        return this;
     }
 
     /**
      * Clears the current list of typists and calls refresh().
-     *
-     * @return This AtlasTypingIndicator for chaining.
      */
-    public TypingIndicatorLayout clear() {
+    public void clear() {
         mTypists.clear();
         refresh();
-        return this;
     }
 
     /**
      * Calls Callback.onBindView() with the current list of typists.
-     *
-     * @return This AtlasTypingIndicator for chaining.
      */
-    private TypingIndicatorLayout refresh() {
-        if (mTypingIndicatorFactory == null) return this;
+    private void refresh() {
+        if (mTypingIndicatorFactory == null) return;
         mTypingIndicatorFactory.onBindView(mIndicatorView, mTypists);
-        return this;
     }
 
     /**

@@ -96,7 +96,7 @@
         <attr name="android:maxLines"/>
     </declare-styleable>
 
-    <declare-styleable name="MessageItemListView">
+    <declare-styleable name="MessageItemsListView">
         <attr name="myBubbleColor" />
         <attr name="myTextColor" />
         <attr name="myTextSize" />
@@ -108,6 +108,10 @@
         <attr name="theirTextTypeface" />
         <attr name="theirTextStyle" />
         <attr name="shouldShowAvatarsInOneOnOneConversations" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ConversationView">
+        
     </declare-styleable>
 
     <declare-styleable name="AddressBar">

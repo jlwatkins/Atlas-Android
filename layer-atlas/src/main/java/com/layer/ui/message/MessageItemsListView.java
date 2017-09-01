@@ -31,7 +31,7 @@ import com.layer.ui.util.views.SwipeableItem;
 import java.util.List;
 import java.util.Set;
 
-public class MessageItemListView extends SwipeRefreshLayout implements LayerChangeEventListener.BackgroundThread.Weak {
+public class MessageItemsListView extends SwipeRefreshLayout implements LayerChangeEventListener.BackgroundThread.Weak {
 
     protected boolean mShouldShowAvatarsInOneOnOneConversations;
     protected MessageStyle mMessageStyle;
@@ -44,11 +44,11 @@ public class MessageItemListView extends SwipeRefreshLayout implements LayerChan
 
     protected int mNumberOfItemsPerSync = 25;
 
-    public MessageItemListView(Context context) {
+    public MessageItemsListView(Context context) {
         this(context, null);
     }
 
-    public MessageItemListView(Context context, AttributeSet attrs) {
+    public MessageItemsListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         parseStyle(context, attrs, 0);
 
@@ -257,26 +257,26 @@ public class MessageItemListView extends SwipeRefreshLayout implements LayerChan
     }
 
     public void parseStyle(Context context, AttributeSet attrs, int defStyle) {
-        TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MessageItemListView, R.attr.MessageItemListView, defStyle);
+        TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MessageItemsListView, R.attr.MessageItemListView, defStyle);
         MessageStyle.Builder messageStyleBuilder = new MessageStyle.Builder();
-        messageStyleBuilder.myTextColor(ta.getColor(R.styleable.MessageItemListView_myTextColor, context.getResources().getColor(R.color.layer_ui_text_black)));
-        int myTextStyle = ta.getInt(R.styleable.MessageItemListView_myTextStyle, Typeface.NORMAL);
+        messageStyleBuilder.myTextColor(ta.getColor(R.styleable.MessageItemsListView_myTextColor, context.getResources().getColor(R.color.layer_ui_text_black)));
+        int myTextStyle = ta.getInt(R.styleable.MessageItemsListView_myTextStyle, Typeface.NORMAL);
         messageStyleBuilder.myTextStyle(myTextStyle);
-        String myTextTypefaceName = ta.getString(R.styleable.MessageItemListView_myTextTypeface);
+        String myTextTypefaceName = ta.getString(R.styleable.MessageItemsListView_myTextTypeface);
         messageStyleBuilder.myTextTypeface(myTextTypefaceName != null ? Typeface.create(myTextTypefaceName, myTextStyle) : null);
-        messageStyleBuilder.myTextSize(ta.getDimensionPixelSize(R.styleable.MessageItemListView_myTextSize, context.getResources().getDimensionPixelSize(R.dimen.layer_ui_text_size_message_item)));
+        messageStyleBuilder.myTextSize(ta.getDimensionPixelSize(R.styleable.MessageItemsListView_myTextSize, context.getResources().getDimensionPixelSize(R.dimen.layer_ui_text_size_message_item)));
 
-        messageStyleBuilder.otherTextColor(ta.getColor(R.styleable.MessageItemListView_theirTextColor, context.getResources().getColor(R.color.layer_ui_color_primary_blue)));
-        int otherTextStyle = ta.getInt(R.styleable.MessageItemListView_theirTextStyle, Typeface.NORMAL);
+        messageStyleBuilder.otherTextColor(ta.getColor(R.styleable.MessageItemsListView_theirTextColor, context.getResources().getColor(R.color.layer_ui_color_primary_blue)));
+        int otherTextStyle = ta.getInt(R.styleable.MessageItemsListView_theirTextStyle, Typeface.NORMAL);
         messageStyleBuilder.otherTextStyle(otherTextStyle);
-        String otherTextTypefaceName = ta.getString(R.styleable.MessageItemListView_theirTextTypeface);
+        String otherTextTypefaceName = ta.getString(R.styleable.MessageItemsListView_theirTextTypeface);
         messageStyleBuilder.otherTextTypeface(otherTextTypefaceName != null ? Typeface.create(otherTextTypefaceName, otherTextStyle) : null);
-        messageStyleBuilder.otherTextSize(ta.getDimensionPixelSize(R.styleable.MessageItemListView_theirTextSize, context.getResources().getDimensionPixelSize(R.dimen.layer_ui_text_size_message_item)));
+        messageStyleBuilder.otherTextSize(ta.getDimensionPixelSize(R.styleable.MessageItemsListView_theirTextSize, context.getResources().getDimensionPixelSize(R.dimen.layer_ui_text_size_message_item)));
 
-        messageStyleBuilder.myBubbleColor(ta.getColor(R.styleable.MessageItemListView_myBubbleColor, context.getResources().getColor(R.color.layer_ui_color_primary_blue)));
-        messageStyleBuilder.otherBubbleColor(ta.getColor(R.styleable.MessageItemListView_theirBubbleColor, context.getResources().getColor(R.color.layer_ui_color_primary_gray)));
+        messageStyleBuilder.myBubbleColor(ta.getColor(R.styleable.MessageItemsListView_myBubbleColor, context.getResources().getColor(R.color.layer_ui_color_primary_blue)));
+        messageStyleBuilder.otherBubbleColor(ta.getColor(R.styleable.MessageItemsListView_theirBubbleColor, context.getResources().getColor(R.color.layer_ui_color_primary_gray)));
 
-        mShouldShowAvatarsInOneOnOneConversations = ta.getBoolean(R.styleable.MessageItemListView_shouldShowAvatarsInOneOnOneConversations, false);
+        mShouldShowAvatarsInOneOnOneConversations = ta.getBoolean(R.styleable.MessageItemsListView_shouldShowAvatarsInOneOnOneConversations, false);
         ta.recycle();
         mMessageStyle = messageStyleBuilder.build();
     }

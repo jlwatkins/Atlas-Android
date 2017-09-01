@@ -4,31 +4,39 @@
 
     <data>
 
+        <import type="com.layer.ui.message.MessageItemsListViewModel"/>
+
         <variable
             name="viewModel"
-            type="com.layer.ui.message.MessageItemsListViewModel"/>
+            type="MessageItemsListViewModel"/>
     </data>
 
     <merge
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.layer.ui.message.MessageItemListView
+        <com.layer.ui.message.MessageItemsListView
             android:id="@+id/messages_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            app:adapter="@{viewModel.messageItemsAdapter}"
-            app:cellFactories="@{viewModel.CellFactories}"
-            app:itemSwipeListener="@{viewModel.itemSwipeListener}"/>
+            app:adapter="@{viewModel.adapter}"
+            app:cellFactories="@{viewModel.cellFactories}"
+            app:itemSwipeListener="@{viewModel.itemSwipeListener}"
+            app:layout_constraintBottom_toTopOf="@+id/compose_bar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <com.layer.ui.composebar.ComposeBar
             android:id="@+id/compose_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:hint="@string/messages_compose_bar_hint"
             android:minHeight="48dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
 
     </merge>
 </layout>

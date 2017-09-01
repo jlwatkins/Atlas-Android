@@ -29,6 +29,7 @@ import com.layer.ui.util.IdentityRecyclerViewEventListener;
 import com.layer.ui.util.Log;
 import com.layer.ui.util.imagecache.ImageCacheWrapper;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class MessagesAdapter extends ItemRecyclerViewAdapter<Message, MessageIte
     private final static int VIEW_TYPE_FOOTER = 0;
     protected final Handler mUiThreadHandler;
     protected final DisplayMetrics mDisplayMetrics;
-    protected final Set<CellFactory> mCellFactories = new LinkedHashSet<CellFactory>();
+    protected final List<CellFactory> mCellFactories = new ArrayList<>();
     protected final Map<Integer, MessageCell> mCellTypesByViewType = new HashMap<Integer, MessageCell>();
     protected final Map<CellFactory, Integer> mMyViewTypesByCell =
             new HashMap<CellFactory, Integer>();
@@ -253,7 +254,6 @@ public class MessagesAdapter extends ItemRecyclerViewAdapter<Message, MessageIte
      * know which Messages they can render, and handle View caching, creation, and mBinding.
      *
      * @param cellFactories Cells to register.
-     * @return This MessagesAdapter.
      */
     public MessagesAdapter addCellFactories(List<CellFactory> cellFactories) {
         for (CellFactory cellFactory : cellFactories) {
@@ -273,7 +273,7 @@ public class MessagesAdapter extends ItemRecyclerViewAdapter<Message, MessageIte
         return this;
     }
 
-    public Set<CellFactory> getCellFactories() {
+    public List<CellFactory> getCellFactories() {
         return mCellFactories;
     }
 

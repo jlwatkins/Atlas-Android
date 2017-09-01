@@ -13,6 +13,7 @@ import com.layer.ui.util.Util;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,9 +28,9 @@ public class ConversationItemFormatter {
     protected DateFormat mTimeFormat;
     protected DateFormat mDateFormat;
     // TODO : This is a bad place for this to exist. Need to find a better way in round 2
-    protected Set<CellFactory> mCellFactories;
+    protected List<CellFactory> mCellFactories;
 
-    public ConversationItemFormatter(Context context, DateFormat timeFormat, DateFormat dateFormat, Set<CellFactory> cellFactories) {
+    public ConversationItemFormatter(Context context, DateFormat timeFormat, DateFormat dateFormat, List<CellFactory> cellFactories) {
         mContext = context;
         mTimeFormat = timeFormat;
         mDateFormat = dateFormat;
@@ -118,7 +119,7 @@ public class ConversationItemFormatter {
         return timeText;
     }
 
-    public void setCellFactories(Set<CellFactory> cellFactories) {
+    public void setCellFactories(List<CellFactory> cellFactories) {
         mCellFactories = cellFactories;
     }
 }

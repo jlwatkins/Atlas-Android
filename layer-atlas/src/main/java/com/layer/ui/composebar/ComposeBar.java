@@ -243,7 +243,7 @@ public class ComposeBar extends FrameLayout implements TextWatcher {
         }
     }
 
-    public void setConversation(Conversation conversation, LayerClient layerClient) {
+    public void setConversation(LayerClient layerClient, Conversation conversation) {
         mConversation = conversation;
         mLayerClient = layerClient;
         mTextSender = new TextSender(getContext(), layerClient);

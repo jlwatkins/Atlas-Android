@@ -27,7 +27,9 @@ import com.layer.ui.util.imagecache.PicassoImageCacheWrapper;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ConversationItemTestActivity extends Activity {
@@ -43,7 +45,7 @@ public class ConversationItemTestActivity extends Activity {
 
         DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext());
-        mConversationItemFormatter = new ConversationItemFormatter(this, dateFormat, timeFormat, getCellFactories(layerClient, Picasso.with(this)));
+        mConversationItemFormatter = new ConversationItemFormatter(this, dateFormat, timeFormat, getCellFactories(layerClient));
 
         IdentityFormatter identityFormatter = new IdentityFormatterImpl();
         Identity authenticatedUser = layerClient.getAuthenticatedUser();
@@ -63,8 +65,8 @@ public class ConversationItemTestActivity extends Activity {
         binding.testFourPartItem.setViewModel(viewModel);
     }
 
-    public Set<CellFactory> getCellFactories(LayerClient layerClient, Picasso picasso) {
-        Set<CellFactory> cellFactories = new HashSet<>();
+    public List<CellFactory> getCellFactories(LayerClient layerClient) {
+        List<CellFactory> cellFactories = new ArrayList<>();
 
         cellFactories.add(new TextCellFactory());
         cellFactories.add(new GenericCellFactory());
