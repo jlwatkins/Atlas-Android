@@ -1,6 +1,7 @@
 package com.layer.ui.conversation;
 
 import android.content.Context;
+import android.databinding.BindingAdapter;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -66,6 +67,14 @@ public class ConversationView extends ConstraintLayout {
         mMessageItemListView.setConversation(mLayerClient, conversation);
         mComposeBar.setConversation(mLayerClient, conversation);
         mTypingIndicator.setConversation(mLayerClient, conversation);
+    }
+
+    @BindingAdapter({"app:conversation", "app:layerClient", "app:messageItemsListViewModel"})
+    public static void setConversation(ConversationView view, Conversation conversation,
+                                       LayerClient layerClient, MessageItemsListViewModel viewModel) {
+        view.setMessageItemsListViewModel(viewModel);
+        view.setLayerClient(layerClient);
+        view.setConversation(conversation);
     }
 
     public MessageItemsListView getMessageItemListView() {
