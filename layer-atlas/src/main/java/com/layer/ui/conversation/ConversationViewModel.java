@@ -7,6 +7,7 @@ import android.databinding.Bindable;
 import com.layer.sdk.LayerClient;
 import com.layer.sdk.messaging.Conversation;
 import com.layer.sdk.messaging.Message;
+import com.layer.sdk.query.Query;
 import com.layer.ui.message.MessageItemsListViewModel;
 import com.layer.ui.message.messagetypes.CellFactory;
 import com.layer.ui.util.DateFormatter;
@@ -19,6 +20,7 @@ public class ConversationViewModel extends BaseObservable {
     protected Conversation mConversation;
     protected MessageItemsListViewModel mMessageItemsListViewModel;
     protected LayerClient mLayerClient;
+    protected Query<Message> mQuery;
 
     public ConversationViewModel(Context context, LayerClient layerClient, List<CellFactory> cellFactories,
                                  ImageCacheWrapper imageCacheWrapper, DateFormatter dateFormatter,
@@ -31,6 +33,11 @@ public class ConversationViewModel extends BaseObservable {
 
     public void setConversation(Conversation conversation) {
         mConversation = conversation;
+        notifyChange();
+    }
+
+    public void setQuery(Query<Message> query) {
+        mQuery = query;
         notifyChange();
     }
 

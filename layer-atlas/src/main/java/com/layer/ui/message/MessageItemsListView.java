@@ -242,6 +242,22 @@ public class MessageItemsListView extends SwipeRefreshLayout implements LayerCha
      * @param conversation Conversation to display Messages for.
      */
     public void setConversation(LayerClient layerClient, Conversation conversation) {
+        setConversation(layerClient, conversation, Query.builder(Message.class)
+                .predicate(new Predicate(Message.Property.CONVERSATION, Predicate.Operator.EQUAL_TO, conversation))
+                .sortDescriptor(new SortDescriptor(Message.Property.POSITION, SortDescriptor.Order.ASCENDING))
+                .build());
+    }
+
+
+    /**
+     * Updates the underlying MessagesAdapter with the supplied Query for Messages in the given
+     * Conversation.
+     *
+     * @param layerClient  LayerClient currently in use
+     * @param conversation Conversation to display Messages for.
+     * @param query        Query to be used with the specified conversation
+     */
+    public void setConversation(LayerClient layerClient, Conversation conversation, Query<Message> query) {
         if (conversation != null) {
             mAdapter.setReadReceiptsEnabled(conversation.isReadReceiptsEnabled());
         }
@@ -250,13 +266,10 @@ public class MessageItemsListView extends SwipeRefreshLayout implements LayerCha
         mLayerClient = layerClient;
         mLayerClient.registerEventListener(this);
 
-        mAdapter.setQuery(Query.builder(Message.class)
-                .predicate(new Predicate(Message.Property.CONVERSATION, Predicate.Operator.EQUAL_TO, conversation))
-                .sortDescriptor(new SortDescriptor(Message.Property.POSITION, SortDescriptor.Order.ASCENDING))
-                .build()).refresh();
+        mAdapter.setQuery(query).refresh();
     }
 
-    public void parseStyle(Context context, AttributeSet attrs, int defStyle) {
+    protected void parseStyle(Context context, AttributeSet attrs, int defStyle) {
         TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MessageItemsListView, R.attr.MessageItemListView, defStyle);
         MessageStyle.Builder messageStyleBuilder = new MessageStyle.Builder();
         messageStyleBuilder.myTextColor(ta.getColor(R.styleable.MessageItemsListView_myTextColor, context.getResources().getColor(R.color.layer_ui_text_black)));

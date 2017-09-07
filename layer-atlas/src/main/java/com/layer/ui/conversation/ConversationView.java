@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import com.layer.sdk.LayerClient;
 import com.layer.sdk.messaging.Conversation;
 import com.layer.sdk.messaging.Identity;
+import com.layer.sdk.messaging.Message;
+import com.layer.sdk.query.Query;
 import com.layer.ui.TypingIndicatorLayout;
 import com.layer.ui.composebar.ComposeBar;
 import com.layer.ui.databinding.UiConversationViewBinding;
@@ -53,28 +55,23 @@ public class ConversationView extends ConstraintLayout {
         });
     }
 
-    public void setLayerClient(LayerClient layerClient) {
-        mLayerClient = layerClient;
-    }
-
-    public void setMessageItemsListViewModel(MessageItemsListViewModel viewModel) {
-        mBinding.setViewModel(viewModel);
-        mBinding.executePendingBindings();
-    }
-
-    public void setConversation(Conversation conversation) {
-        mConversation = conversation;
-        mMessageItemListView.setConversation(mLayerClient, conversation);
-        mComposeBar.setConversation(mLayerClient, conversation);
-        mTypingIndicator.setConversation(mLayerClient, conversation);
-    }
-
-    @BindingAdapter({"app:conversation", "app:layerClient", "app:messageItemsListViewModel"})
+    @BindingAdapter(value = {"app:conversation", "app:layerClient", "app:messageItemsListViewModel", "app:query"}, requireAll = false)
     public static void setConversation(ConversationView view, Conversation conversation,
-                                       LayerClient layerClient, MessageItemsListViewModel viewModel) {
-        view.setMessageItemsListViewModel(viewModel);
-        view.setLayerClient(layerClient);
-        view.setConversation(conversation);
+                                       LayerClient layerClient, MessageItemsListViewModel viewModel,
+                                       Query<Message> query) {
+        view.mLayerClient = layerClient;
+
+        view.mBinding.setViewModel(viewModel);
+        view.mBinding.executePendingBindings();
+
+        if (query != null) {
+            view.mMessageItemListView.setConversation(layerClient, conversation, query);
+        } else {
+            view.mMessageItemListView.setConversation(layerClient, conversation);
+        }
+
+        view.mComposeBar.setConversation(layerClient, conversation);
+        view.mTypingIndicator.setConversation(layerClient, conversation);
     }
 
     public MessageItemsListView getMessageItemListView() {
