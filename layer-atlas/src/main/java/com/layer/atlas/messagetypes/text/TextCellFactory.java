@@ -50,7 +50,7 @@ public class TextCellFactory extends AtlasCellFactory<TextCellFactory.CellHolder
         ((GradientDrawable) v.getBackground()).setColor(isMe ? ContextCompat.getColor(c, R.color.atlas_text_blue) : ContextCompat.getColor(c, R.color.atlas_color_primary_gray));
 
         TextView t = (TextView) v.findViewById(R.id.cell_text);
-        t.setTextSize(TypedValue.COMPLEX_UNIT_PX, isMe ? mMessageStyle.getMyTextSize() + 4 : mMessageStyle.getOtherTextSize() + 4);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_PX, isMe ? mMessageStyle.getMyTextSize() : mMessageStyle.getOtherTextSize());
         t.setTextColor(isMe ? ContextCompat.getColor(c, R.color.atlas_text_white) : ContextCompat.getColor(c, R.color.atlas_text_black));
         t.setLinkTextColor(isMe ? ContextCompat.getColor(c, R.color.atlas_text_white) : ContextCompat.getColor(c, R.color.atlas_text_black));
         t.setTypeface(isMe ? mMessageStyle.getMyTextTypeface() : mMessageStyle.getOtherTextTypeface(), isMe ? mMessageStyle.getMyTextStyle() : mMessageStyle.getOtherTextStyle());
